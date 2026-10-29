@@ -96,6 +96,18 @@ if (is_array($noticias)) {
 	}
 }
 
+$destaque = $publicacoes[0] ?? null;
+$secundarias = array_slice($publicacoes, 1);
+$qtdSecundarias = count($secundarias);
+
+$classeColuna = 'col-sm-6 col-lg-3';
+if ($qtdSecundarias === 1) {
+	$classeColuna = 'col-lg-8';
+} elseif ($qtdSecundarias === 2) {
+	$classeColuna = 'col-sm-6 col-lg-6';
+} elseif ($qtdSecundarias === 3) {
+	$classeColuna = 'col-sm-6 col-lg-4';
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -301,66 +313,125 @@ if (is_array($noticias)) {
 					</div>
 				</div>
 
-				<div class="row g-4">
-					<?php foreach ($publicacoes as $noticia): ?>
-						<div class="col-sm-6 col-lg-4">
-							<article class="news-card">
-								<?php if ($noticia['imagem']): ?>
-									<a class="news-card__media" href="<?= esc($noticia['urlLeitura']) ?>"
-										tabindex="-1" aria-hidden="true">
-										<img src="data:<?= esc($noticia['mime']) ?>;base64,<?= $noticia['imagem'] ?>"
-											alt="" loading="lazy">
-									</a>
-								<?php else: ?>
-									<div class="news-card__media news-card__media--empty" aria-hidden="true">
-										<i class="fas fa-newspaper"></i>
-									</div>
-								<?php endif; ?>
+				<?php if ($destaque): ?>
+					<!-- Notícia em destaque -->
+					<article class="featured-card mb-4 mb-lg-5">
+						<div class="row g-0 h-100">
+							<?php if ($destaque['imagem']): ?>
+								<div class="col-lg-6 featured-media">
+									<img src="data:<?= esc($destaque['mime']) ?>;base64,<?= $destaque['imagem'] ?>"
+										alt="<?= esc($destaque['titulo']) ?>" fetchpriority="high">
+								</div>
+							<?php endif; ?>
 
-								<div class="news-card__body">
-									<div class="d-flex align-items-center justify-content-between gap-2">
-										<span class="news-card__date"><?= esc($noticia['data']) ?></span>
-										<?php if ($usuarioLogado): ?>
-											<a class="icon-action" href="<?= esc($noticia['urlEdicao']) ?>"
-												title="Editar notícia" aria-label="Editar notícia">
-												<i class="fas fa-pen"></i>
-											</a>
-										<?php endif; ?>
-									</div>
+							<div class="<?= $destaque['imagem'] ? 'col-lg-6' : 'col-12' ?>">
+								<div class="featured-body">
+									<span class="chip-featured"><i class="fas fa-star"></i>Destaque</span>
 
-									<h3 class="news-card__title clamp-2">
-										<a href="<?= esc($noticia['urlLeitura']) ?>">
-											<?= esc($noticia['titulo']) ?>
+									<h3 class="featured-title">
+										<a href="<?= esc($destaque['urlLeitura']) ?>">
+											<?= esc($destaque['titulo']) ?>
 										</a>
 									</h3>
 
-									<p class="news-card__excerpt clamp-3">
-										<?= esc(resumir($noticia['texto'], 150)) ?>
+									<p class="featured-excerpt">
+										<?= esc(resumir($destaque['texto'], 260)) ?>
 									</p>
 
-									<?php if ($noticia['tags']): ?>
-										<div class="tag-list mb-0">
-											<?php foreach ($noticia['tags'] as $tag): ?>
+									<?php if ($destaque['tags']): ?>
+										<div class="tag-list">
+											<?php foreach ($destaque['tags'] as $tag): ?>
 												<span class="tag"><?= esc($tag) ?></span>
 											<?php endforeach; ?>
 										</div>
 									<?php endif; ?>
 
-									<div class="news-card__footer">
-										<div class="meta-row">
-											<span class="avatar avatar-sm"><?= esc(inicial($noticia['autor'])) ?></span>
-											<span class="small"><?= esc($noticia['autor']) ?></span>
-										</div>
-										<a class="btn btn-ghost btn-sm" href="<?= esc($noticia['urlLeitura']) ?>"
-											aria-label="Ler notícia: <?= esc($noticia['titulo']) ?>">
-											Ler <i class="fas fa-arrow-right ms-1"></i>
-										</a>
+									<div class="meta-row mt-auto pt-3">
+										<span class="avatar"><?= esc(inicial($destaque['autor'])) ?></span>
+										<span class="meta-author"><?= esc($destaque['autor']) ?></span>
+										<span class="meta-divider" aria-hidden="true"></span>
+										<span><?= esc($destaque['data']) ?></span>
+
+										<span class="ms-auto d-flex align-items-center gap-2">
+											<?php if ($usuarioLogado): ?>
+												<a class="icon-action" href="<?= esc($destaque['urlEdicao']) ?>"
+													title="Editar notícia" aria-label="Editar notícia">
+													<i class="fas fa-pen"></i>
+												</a>
+											<?php endif; ?>
+											<a class="btn btn-brand btn-sm" href="<?= esc($destaque['urlLeitura']) ?>">
+												Ler notícia <i class="fas fa-arrow-right ms-1"></i>
+											</a>
+										</span>
 									</div>
 								</div>
-							</article>
+							</div>
 						</div>
-					<?php endforeach; ?>
-				</div>
+					</article>
+
+					<?php if ($secundarias): ?>
+						<div class="row g-4">
+							<?php foreach ($secundarias as $noticia): ?>
+								<div class="<?= $classeColuna ?>">
+									<article class="news-card">
+										<?php if ($noticia['imagem']): ?>
+											<a class="news-card__media" href="<?= esc($noticia['urlLeitura']) ?>"
+												tabindex="-1" aria-hidden="true">
+												<img src="data:<?= esc($noticia['mime']) ?>;base64,<?= $noticia['imagem'] ?>"
+													alt="" loading="lazy">
+											</a>
+										<?php else: ?>
+											<div class="news-card__media news-card__media--empty" aria-hidden="true">
+												<i class="fas fa-newspaper"></i>
+											</div>
+										<?php endif; ?>
+
+										<div class="news-card__body">
+											<div class="d-flex align-items-center justify-content-between gap-2">
+												<span class="news-card__date"><?= esc($noticia['data']) ?></span>
+												<?php if ($usuarioLogado): ?>
+													<a class="icon-action" href="<?= esc($noticia['urlEdicao']) ?>"
+														title="Editar notícia" aria-label="Editar notícia">
+														<i class="fas fa-pen"></i>
+													</a>
+												<?php endif; ?>
+											</div>
+
+											<h3 class="news-card__title clamp-2">
+												<a href="<?= esc($noticia['urlLeitura']) ?>">
+													<?= esc($noticia['titulo']) ?>
+												</a>
+											</h3>
+
+											<p class="news-card__excerpt clamp-3">
+												<?= esc(resumir($noticia['texto'], 150)) ?>
+											</p>
+
+											<?php if ($noticia['tags']): ?>
+												<div class="tag-list mb-0">
+													<?php foreach ($noticia['tags'] as $tag): ?>
+														<span class="tag"><?= esc($tag) ?></span>
+													<?php endforeach; ?>
+												</div>
+											<?php endif; ?>
+
+											<div class="news-card__footer">
+												<div class="meta-row">
+													<span class="avatar avatar-sm"><?= esc(inicial($noticia['autor'])) ?></span>
+													<span class="small"><?= esc($noticia['autor']) ?></span>
+												</div>
+												<a class="btn btn-ghost btn-sm" href="<?= esc($noticia['urlLeitura']) ?>"
+													aria-label="Ler notícia: <?= esc($noticia['titulo']) ?>">
+													Ler <i class="fas fa-arrow-right ms-1"></i>
+												</a>
+											</div>
+										</div>
+									</article>
+								</div>
+							<?php endforeach; ?>
+						</div>
+					<?php endif; ?>
+				<?php endif; ?>
 			</div>
 		</section>
 
