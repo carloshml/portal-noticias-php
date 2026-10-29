@@ -331,11 +331,11 @@ if ($qtdSecundarias === 1) {
 
 		<?php if (!$usuarioLogado && $destaque): ?>
 			<!-- Convite para participar -->
-			<section class="pb-5">
+			<section class="p-5">
 				<div class="container">
 					<div class="join-band">
 						<div class="join-inner">
-							<div class="row align-items-center g-4">
+							<div class="row align-items-center m-4">
 								<div class="col-lg-8">
 									<span class="join-kicker"><i class="fas fa-bullhorn"></i> Participe</span>
 									<h2 class="join-title">Tem uma notícia para contar?</h2>
