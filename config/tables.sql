@@ -27,3 +27,25 @@ CREATE TABLE noticia (
     ON DELETE SET NULL
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- Tabela: tags
+CREATE TABLE tags (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL,
+  ultima_utilizacao DATETIME NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_tags_nome (nome),
+  KEY idx_tags_ultima_utilizacao (ultima_utilizacao)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- Tabela: noticia_tags (N:N entre notícia e tag)
+CREATE TABLE noticia_tags (
+  noticia_id INT NOT NULL,
+  tag_id INT NOT NULL,
+  PRIMARY KEY (noticia_id, tag_id),
+  KEY idx_noticia_tags_tag (tag_id),
+  CONSTRAINT fk_noticia_tags_noticia FOREIGN KEY (noticia_id) REFERENCES noticia (id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_noticia_tags_tag FOREIGN KEY (tag_id) REFERENCES tags (id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

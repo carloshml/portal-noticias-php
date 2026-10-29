@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../config/banco.php';
+require_once __DIR__ . '/../DAO/tag.php';
 
 if (!isset($_SESSION['id_usuario'])) {
     header('Location: ../index.php?erro=2');
@@ -61,19 +62,22 @@ $temImagem = $imagem
     && ($imagem['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK
     && is_uploaded_file($imagem['tmp_name']);
 
+$tags = array_values(array_filter(
+    [$tag1, $tag2, $tag3],
+    static fn($tag) => $tag !== ''
+));
+
 try {
     $pdo = Banco::conectar();
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->beginTransaction();
 
-    $sql = "INSERT INTO noticia (titulo, texto, tag1, tag2, tag3, id_autor, data_criacao, foto)
-            VALUES (:titulo, :texto, :tag1, :tag2, :tag3, :id_autor, NOW(), :foto)";
+    $sql = "INSERT INTO noticia (titulo, texto, id_autor, data_criacao, foto)
+            VALUES (:titulo, :texto, :id_autor, NOW(), :foto)";
 
     $stmt = $pdo->prepare($sql);
     $stmt->bindValue(':titulo', $titulo);
     $stmt->bindValue(':texto', $texto);
-    $stmt->bindValue(':tag1', $tag1);
-    $stmt->bindValue(':tag2', $tag2);
-    $stmt->bindValue(':tag3', $tag3);
     $stmt->bindValue(':id_autor', $id_autor, PDO::PARAM_INT);
 
     if ($temImagem) {
@@ -83,7 +87,16 @@ try {
     }
 
     $stmt->execute();
+    $noticiaId = (int) $pdo->lastInsertId();
+
+    $tagService = new TagService();
+    $tagService->sincronizarNoticia($noticiaId, $tags);
+
+    $pdo->commit();
 } catch (PDOException $e) {
+    if (isset($pdo) && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     $_SESSION['noticia_form_erros'] = ['Não foi possível publicar a notícia. Tente novamente.'];
     $_SESSION['noticia_form_old'] = $old;
     header('Location: ../views/noticia-form.php');
