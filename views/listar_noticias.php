@@ -3,7 +3,32 @@ session_start();
 require_once('../controllers/noticia-list-all.php');
 $erro = isset($_GET['erro']) ? $_GET['erro'] : 0;
 $nome_usuario = $_SESSION['nome_usuario'];
-$noticias = fetchNoticias();
+
+$porPagina = 6;
+$pagina = isset($_GET['pagina']) && is_numeric($_GET['pagina']) ? (int) $_GET['pagina'] : 1;
+$pagina = max(1, $pagina);
+$totalNoticias = contarNoticias();
+$totalPaginas = max(1, (int) ceil($totalNoticias / $porPagina));
+$pagina = min($pagina, $totalPaginas);
+$noticias = fetchNoticiasPaginadas($porPagina, ($pagina - 1) * $porPagina);
+$paginaUrl = 'listar_noticias.php?pagina=';
+
+$paginasVisiveis = [];
+if ($totalPaginas <= 7) {
+    $paginasVisiveis = range(1, $totalPaginas);
+} else {
+    $paginasVisiveis = [1];
+    if ($pagina > 3) {
+        $paginasVisiveis[] = '...';
+    }
+    for ($p = max(2, $pagina - 1); $p <= min($totalPaginas - 1, $pagina + 1); $p++) {
+        $paginasVisiveis[] = $p;
+    }
+    if ($pagina < $totalPaginas - 2) {
+        $paginasVisiveis[] = '...';
+    }
+    $paginasVisiveis[] = $totalPaginas;
+}
 ?>
 
 <!DOCTYPE html>
@@ -28,6 +53,49 @@ $noticias = fetchNoticias();
             top: 1rem;
             left: 1rem;
             z-index: 10;
+        }
+
+        .list-pagination {
+            margin-top: 2rem;
+        }
+
+        .list-pagination .pagination {
+            gap: .35rem;
+            margin-bottom: 0;
+        }
+
+        .list-pagination .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2.5rem;
+            padding: .55rem .8rem;
+            border: 1px solid #e5eaf3;
+            border-radius: 10px;
+            background: #fff;
+            color: var(--secondary-color);
+            font-size: .9rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .list-pagination .page-link:hover,
+        .list-pagination .page-link:focus {
+            border-color: rgba(67, 97, 238, .35);
+            background: rgba(67, 97, 238, .06);
+            color: var(--secondary-color);
+        }
+
+        .list-pagination .page-item.active .page-link {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .list-pagination .page-item.disabled .page-link {
+            border-color: #e5eaf3;
+            background: #fff;
+            color: #b6c0d0;
         }
     </style>
 
@@ -122,6 +190,45 @@ $noticias = fetchNoticias();
 
             <?php endforeach; ?>
         </div>
+
+        <?php if ($totalPaginas > 1): ?>
+            <nav class="list-pagination" aria-label="Paginação de notícias">
+                <ul class="pagination justify-content-center flex-wrap">
+                    <li class="page-item <?= $pagina <= 1 ? 'disabled' : '' ?>">
+                        <?php if ($pagina > 1): ?>
+                            <a class="page-link" href="<?= $paginaUrl . ($pagina - 1) ?>" rel="prev">
+                                <i class="fas fa-chevron-left me-1"></i>Anterior
+                            </a>
+                        <?php else: ?>
+                            <span class="page-link"><i class="fas fa-chevron-left me-1"></i>Anterior</span>
+                        <?php endif; ?>
+                    </li>
+
+                    <?php foreach ($paginasVisiveis as $numeroPagina): ?>
+                        <?php if ($numeroPagina === '...'): ?>
+                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                        <?php else: ?>
+                            <li class="page-item <?= (int) $numeroPagina === $pagina ? 'active' : '' ?>">
+                                <a class="page-link" href="<?= $paginaUrl . $numeroPagina ?>"
+                                    <?= (int) $numeroPagina === $pagina ? 'aria-current="page"' : '' ?>>
+                                    <?= (int) $numeroPagina ?>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+
+                    <li class="page-item <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>">
+                        <?php if ($pagina < $totalPaginas): ?>
+                            <a class="page-link" href="<?= $paginaUrl . ($pagina + 1) ?>" rel="next">
+                                Próxima<i class="fas fa-chevron-right ms-1"></i>
+                            </a>
+                        <?php else: ?>
+                            <span class="page-link">Próxima<i class="fas fa-chevron-right ms-1"></i></span>
+                        <?php endif; ?>
+                    </li>
+                </ul>
+            </nav>
+        <?php endif; ?>
     </div>
 
 
