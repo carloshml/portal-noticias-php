@@ -1,35 +1,15 @@
 <?php
 session_start();
 require_once('DAO/noticia.php');
+require_once('views/partials/helpers.php');
 
-/** Escapa texto para saída segura no HTML. */
-function esc($valor): string
-{
-	return htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8');
-}
-
-/** Limita o texto a um resumo de uma linha. */
-function resumir($texto, int $limite = 200): string
-{
-	$limpo = trim((string) preg_replace('/\s+/u', ' ', (string) $texto));
-	if (mb_strlen($limpo) <= $limite) {
-		return $limpo;
-	}
-	return rtrim(mb_substr($limpo, 0, $limite)) . '…';
-}
-
-/** Primeira letra do nome, usada no avatar. */
-function inicial($nome): string
-{
-	$nome = trim((string) $nome);
-	return $nome === '' ? '?' : mb_strtoupper(mb_substr($nome, 0, 1, 'UTF-8'), 'UTF-8');
-}
-
-/** "1 notícia" / "5 notícias". */
-function pluralNoticias(int $total, string $singular = 'notícia', string $plural = 'notícias'): string
-{
-	return $total . ' ' . ($total === 1 ? $singular : $plural);
-}
+$pageTitle = 'Notícias Atuais — Últimas notícias';
+$pageDescription = 'Acompanhe as últimas notícias publicadas na plataforma Notícias Atuais e publique as suas.';
+$pageStyles = [];
+$homeUrl = 'index.php';
+$urlNoticias = 'noticias';
+$navUltimasHref = '#ultimas-noticias';
+$paginaAtual = 'home';
 
 $erro = (isset($_GET['erro']) && is_numeric($_GET['erro'])) ? (int) $_GET['erro'] : 0;
 $usuarioLogado = isset($_SESSION['id_usuario']);
@@ -112,109 +92,12 @@ if ($qtdSecundarias === 1) {
 <!DOCTYPE html>
 <html lang="pt-br">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description"
-		content="Acompanhe as últimas notícias publicadas na plataforma Notícias Atuais e publique as suas.">
-	<title>Notícias Atuais — Últimas notícias</title>
-
-	<!-- Fontes -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-	<!-- Bootstrap 5 CSS -->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-	<!-- Font Awesome -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<!-- Estilos da página inicial -->
-	<link rel="stylesheet" href="assets/css/home.css">
-</head>
+<?php include 'views/partials/head.php'; ?>
 
 <body class="home">
 	<a class="skip-link" href="#ultimas-noticias">Pular para as notícias</a>
 
-	<!-- Barra de navegação -->
-	<header class="site-nav">
-		<nav class="navbar navbar-expand-lg navbar-light">
-			<div class="container">
-				<a class="navbar-brand" href="index.php">
-					<span class="brand-mark"><i class="fas fa-newspaper"></i></span>
-					<span>Notícias <span class="brand-sub">Atuais</span></span>
-				</a>
-
-				<button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
-					data-bs-target="#navHome" aria-controls="navHome" aria-expanded="false"
-					aria-label="Abrir menu de navegação">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-
-				<div class="collapse navbar-collapse" id="navHome">
-					<ul class="navbar-nav me-auto mb-0 ms-lg-3">
-						<li class="nav-item">
-							<a class="nav-link nav-link-soft" href="#ultimas-noticias">Últimas notícias</a>
-						</li>
-						<?php if ($usuarioLogado): ?>
-							<li class="nav-item">
-								<a class="nav-link nav-link-soft" href="views/listar_noticias.php">Todas as notícias</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link nav-link-soft" href="views/escrever_noticia.php">Escrever notícia</a>
-							</li>
-						<?php endif; ?>
-					</ul>
-
-					<div class="nav-actions">
-						<?php if ($usuarioLogado): ?>
-							<a class="btn btn-ghost btn-sm" href="views/home.php">
-								<i class="fas fa-gauge-high me-2"></i>Painel
-							</a>
-
-							<div class="dropdown">
-								<button class="btn btn-user dropdown-toggle" type="button" data-bs-toggle="dropdown"
-									aria-expanded="false">
-									<span class="avatar avatar-sm"><?= esc(inicial($nomeUsuario)) ?></span>
-									<span class="text-truncate d-none d-sm-inline"><?= esc($nomeUsuario) ?></span>
-									<span class="text-truncate d-sm-none"><?= esc(explode(' ', $nomeUsuario)[0]) ?></span>
-								</button>
-								<ul class="dropdown-menu dropdown-menu-end">
-									<li>
-										<h6 class="dropdown-header text-uppercase small text-muted mb-1">Sessão iniciada
-										</h6>
-									</li>
-									<li><a class="dropdown-item" href="views/home.php"><i class="fas fa-gauge-high"></i>
-											Painel</a></li>
-									<li><a class="dropdown-item" href="views/escrever_noticia.php"><i
-												class="fas fa-pen-to-square"></i> Escrever notícia</a></li>
-									<li><a class="dropdown-item" href="views/listar_noticias.php"><i
-												class="fas fa-list"></i> Todas as notícias</a></li>
-									<li>
-										<hr class="dropdown-divider">
-									</li>
-									<li>
-										<form method="post" action="services/logout.php">
-											<button class="dropdown-item text-danger" type="submit">
-												<i class="fas fa-arrow-right-from-bracket"></i> Sair
-											</button>
-										</form>
-									</li>
-								</ul>
-							</div>
-						<?php else: ?>
-							<button class="btn btn-ghost btn-sm" type="button" data-bs-toggle="modal"
-								data-bs-target="#modal_login" id="btn_abrir_login">
-								<i class="fas fa-right-to-bracket me-2"></i>Entrar
-							</button>
-							<a class="btn btn-brand btn-sm" href="views/usuario-inscrevase.php">
-								<i class="fas fa-user-plus me-2"></i>Criar conta
-							</a>
-						<?php endif; ?>
-					</div>
-				</div>
-			</div>
-		</nav>
-	</header>
+	<?php include 'views/partials/site-header.php'; ?>
 
 	<main>
 		<!-- Hero -->
@@ -493,147 +376,11 @@ if ($qtdSecundarias === 1) {
 		<?php endif; ?>
 	</main>
 
-	<!-- Rodapé -->
-	<footer class="site-footer">
-		<div class="container">
-			<div class="row gy-4">
-				<div class="col-lg-5">
-					<a class="footer-brand" href="index.php">
-						<span class="brand-mark brand-mark--sm"><i class="fas fa-newspaper"></i></span>
-						Notícias Atuais
-					</a>
-					<p class="footer-text mt-3 mb-0">
-						Um espaço para acompanhar e publicar as notícias que importam, com leitura gratuita para
-						todos.
-					</p>
-				</div>
+	<?php include 'views/partials/site-footer.php'; ?>
 
-				<div class="col-6 col-lg-3">
-					<h2 class="footer-title">Navegar</h2>
-					<ul class="footer-links">
-						<li><a href="#ultimas-noticias">Últimas notícias</a></li>
-						<?php if ($usuarioLogado): ?>
-							<li><a href="views/home.php">Painel</a></li>
-							<li><a href="views/escrever_noticia.php">Escrever notícia</a></li>
-							<li><a href="views/listar_noticias.php">Todas as notícias</a></li>
-						<?php else: ?>
-							<li><a href="views/usuario-inscrevase.php">Criar conta</a></li>
-							<li><a href="#" data-bs-toggle="modal" data-bs-target="#modal_login">Entrar</a></li>
-						<?php endif; ?>
-					</ul>
-				</div>
+	<?php include 'views/partials/login-modal.php'; ?>
 
-				<div class="col-6 col-lg-4">
-					<h2 class="footer-title">Sobre</h2>
-					<p class="footer-text mb-0">
-						Conteúdo produzido pela comunidade. Tem dúvidas ou sugestões? Entre em contato com a equipe
-						pelo painel do sistema.
-					</p>
-				</div>
-			</div>
-
-			<hr class="footer-divider">
-
-			<div class="d-flex flex-column flex-sm-row justify-content-between gap-2 footer-bottom">
-				<span>© <?= date('Y') ?> Notícias Atuais. Todos os direitos reservados.</span>
-				<span>Feito com <i class="fas fa-heart"></i> para quem gosta de estar bem informado.</span>
-			</div>
-		</div>
-	</footer>
-
-	<?php if (!$usuarioLogado): ?>
-		<!-- Modal de login -->
-		<div class="modal fade login-modal" id="modal_login" tabindex="-1" aria-labelledby="loginModalTitle"
-			aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered modal-lg">
-				<div class="modal-content">
-					<div class="row g-0">
-						<div class="col-md-5 login-aside d-none d-md-flex flex-column p-4 p-lg-5">
-							<span class="brand-mark brand-mark--light mb-4"><i class="fas fa-newspaper"></i></span>
-							<h2 class="login-aside__title">Bem-vindo de volta</h2>
-							<p class="login-aside__text mb-0">
-								Entre para publicar notícias, editar suas publicações e acessar o painel de gestão.
-							</p>
-							<ul class="login-aside__list mt-auto pt-4">
-								<li><i class="fas fa-check"></i> Publique quando quiser</li>
-								<li><i class="fas fa-check"></i> Edite suas notícias</li>
-								<li><i class="fas fa-check"></i> Acesso ao painel</li>
-							</ul>
-						</div>
-
-						<div class="col-12 col-md-7">
-							<div class="p-4 p-lg-5">
-								<div class="d-flex justify-content-between align-items-start gap-3">
-									<div>
-										<h3 class="h5 fw-bold mb-1" id="loginModalTitle">Acessar sua conta</h3>
-										<p class="text-muted small mb-0">Use seu login e senha para continuar.</p>
-									</div>
-									<button type="button" class="btn-close" data-bs-dismiss="modal"
-										aria-label="Fechar"></button>
-								</div>
-
-								<?php if ($erro === 1): ?>
-									<div class="login-alert login-alert--error mt-4" role="alert">
-										<i class="fas fa-circle-exclamation"></i>
-										<span>Usuário ou senha inválido(s). Confira os dados e tente novamente.</span>
-									</div>
-								<?php elseif ($erro === 2): ?>
-									<div class="login-alert login-alert--warning mt-4" role="alert">
-										<i class="fas fa-lock"></i>
-										<span>É necessário entrar para acessar esta página.</span>
-									</div>
-								<?php endif; ?>
-
-								<form method="post" action="services/valida_acesso.php" id="formLogin" class="mt-4">
-									<div class="form-floating mb-3">
-										<input type="text" class="form-control" id="campo_usuario" name="login"
-											placeholder="Usuário" autocomplete="username" required>
-										<label for="campo_usuario">Usuário</label>
-									</div>
-									<div class="form-floating mb-3">
-										<input type="password" class="form-control" id="campo_senha" name="senha"
-											placeholder="Senha" autocomplete="current-password" required>
-										<label for="campo_senha">Senha</label>
-									</div>
-
-									<button type="submit" class="btn btn-brand w-100">Entrar</button>
-								</form>
-
-								<div class="login-divider"><span>ou</span></div>
-
-								<a class="btn btn-ghost w-100" href="views/usuario-inscrevase.php">
-									<i class="fas fa-user-plus me-2"></i>Criar uma conta gratuita
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	<?php endif; ?>
-
-	<!-- Bootstrap 5 JS Bundle with Popper -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-	<script>
-		(function () {
-			var modalEl = document.getElementById('modal_login');
-			if (!modalEl) {
-				return;
-			}
-
-			var erro = <?= $erro ?>;
-			if (erro === 1 || erro === 2) {
-				bootstrap.Modal.getOrCreateInstance(modalEl).show();
-			}
-
-			modalEl.addEventListener('shown.bs.modal', function () {
-				var campo = document.getElementById('campo_usuario');
-				if (campo) {
-					campo.focus();
-				}
-			});
-		})();
-	</script>
+	<?php include 'views/partials/page-scripts.php'; ?>
 </body>
 
 </html>
