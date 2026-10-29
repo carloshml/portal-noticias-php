@@ -313,7 +313,32 @@ if ($qtdSecundarias === 1) {
 					</div>
 				</div>
 
-				<?php if ($destaque): ?>
+				<?php if (!$destaque): ?>
+					<!-- Nenhuma notícia publicada -->
+					<div class="empty-state">
+						<div class="empty-state__icon"><i class="fas fa-newspaper"></i></div>
+						<h3 class="mb-2">Nenhuma notícia publicada ainda</h3>
+						<p class="mb-0">
+							Assim que a primeira publicação sair, ela aparece aqui em destaque. Enquanto isso, você pode
+							criar sua conta para publicar.
+						</p>
+						<div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
+							<?php if ($usuarioLogado): ?>
+								<a class="btn btn-brand" href="views/escrever_noticia.php">
+									<i class="fas fa-pen-to-square me-2"></i>Escrever a primeira notícia
+								</a>
+							<?php else: ?>
+								<button class="btn btn-brand" type="button" data-bs-toggle="modal"
+									data-bs-target="#modal_login">
+									<i class="fas fa-right-to-bracket me-2"></i>Entrar
+								</button>
+								<a class="btn btn-ghost" href="views/usuario-inscrevase.php">
+									<i class="fas fa-user-plus me-2"></i>Criar conta
+								</a>
+							<?php endif; ?>
+						</div>
+					</div>
+				<?php else: ?>
 					<!-- Notícia em destaque -->
 					<article class="featured-card mb-4 mb-lg-5">
 						<div class="row g-0 h-100">
