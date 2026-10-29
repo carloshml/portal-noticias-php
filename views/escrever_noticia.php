@@ -53,8 +53,12 @@ $noticia = $_GET['noticia'] ?? '{}';
   <div id="mensagem-upload" class="text-center"></div>
   <section class="container mt-5">
     <div class="card shadow-sm border-0">
-      <div class="card-header text-white" style="background-color: var(--primary-color);">
+      <div class="card-header text-white d-flex flex-wrap justify-content-between align-items-center gap-2"
+        style="background-color: var(--primary-color);">
         <h4 class="mb-0">Escreva Sua Notícia</h4>
+        <a href="../index.php" class="btn btn-sm btn-light" aria-label="Voltar para a página inicial">
+          <i class="fas fa-arrow-left me-2"></i>Voltar
+        </a>
       </div>
       <div class="card-body p-4">
         <form method="post" enctype="multipart/form-data"
