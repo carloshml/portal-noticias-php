@@ -49,6 +49,11 @@ $noticias = fetchNoticias();
     </nav>
 
     <div class=" container py-5 ">
+        <div class="d-flex justify-content-end mb-3">
+            <a href="home.php" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Voltar
+            </a>
+        </div>
         <div class="row">
             <?php foreach ($noticias as $row):
                 $foto_content = $row['foto'];
