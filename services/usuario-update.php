@@ -8,16 +8,17 @@ if (!empty($_POST)) {
     $enderecoErro = null;
     $telefoneErro = null;
     $emailErro = null;
+    $emailError = null;
     $sexoErro = null;
     $loginError = null;
 
-    $id = $_POST['id'];
-    $nome = $_POST['nome'];
+    $id = (int) $_POST['id'];
+    $nome = trim($_POST['nome']);
     $endereco = $_POST['endereco'];
     $telefone = $_POST['telefone'];
-    $email = $_POST['email'];
+    $email = trim($_POST['email']);
     $sexo = $_POST['sexo'];
-    $login = $_POST['login'];
+    $login = trim($_POST['login']);
 
     //Validação
     $valido = true;
@@ -59,26 +60,47 @@ if (!empty($_POST)) {
         try {
             $pdo = Banco::conectar();
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $sql = "UPDATE pessoa 
-                   SET nome = ?, endereco = ?, telefone = ?, email = ?, sexo = ?, login = ? 
-                 WHERE id = ?";
-            $q = $pdo->prepare($sql);
-            $q->execute([$nome, $endereco, $telefone, $email, $sexo, $login, $id]);
-            echo json_encode([
-                'valido' => true,
-                'mensagem' => 'Atualizado com sucesso',
-                'id' => $id
-            ], JSON_UNESCAPED_UNICODE);
+
+            // Login e e-mail são únicos: ignorar o próprio registro.
+            $consulta = $pdo->prepare("SELECT COUNT(*) FROM pessoa WHERE login = ? AND id <> ?");
+            $consulta->execute([$login, $id]);
+            if ((int) $consulta->fetchColumn() > 0) {
+                $loginError = 'Este login já está em uso.';
+                $valido = false;
+            }
+
+            $consulta = $pdo->prepare("SELECT COUNT(*) FROM pessoa WHERE email = ? AND id <> ?");
+            $consulta->execute([$email, $id]);
+            if ((int) $consulta->fetchColumn() > 0) {
+                $emailError = 'Este e-mail já está cadastrado.';
+                $valido = false;
+            }
+
+            if ($valido) {
+                $sql = "UPDATE pessoa 
+                       SET nome = ?, endereco = ?, telefone = ?, email = ?, sexo = ?, login = ? 
+                     WHERE id = ?";
+                $q = $pdo->prepare($sql);
+                $q->execute([$nome, $endereco, $telefone, $email, $sexo, $login, $id]);
+                echo json_encode([
+                    'valido' => true,
+                    'mensagem' => 'Atualizado com sucesso',
+                    'id' => $id
+                ], JSON_UNESCAPED_UNICODE);
+            }
         } catch (PDOException $e) {
             echo json_encode([
                 'valido' => false,
                 'erro' => true,
                 'mensagem' => $e->getMessage()
             ], JSON_UNESCAPED_UNICODE);
+            return;
         } finally {
             Banco::desconectar();
         }
-    } else {
+    }
+
+    if (!$valido) {
         echo json_encode([
             ['valido' => false],
             ['erroNome' => !empty($nomeError), 'motivo' => $nomeError ?? ''],

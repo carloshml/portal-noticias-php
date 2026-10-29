@@ -12,12 +12,12 @@ if (!empty($_POST)) {
     $senhaErro = null;
     $senhaErro2 = null;
 
-    $nome = $_POST['nome'];
+    $nome = trim($_POST['nome']);
     $endereco = $_POST['endereco'];
     $telefone = $_POST['telefone'];
-    $email = $_POST['email'];
+    $email = trim($_POST['email']);
     $sexo = $_POST['sexo'] ?? null;
-    $login = $_POST['login'];
+    $login = trim($_POST['login']);
     $senha = md5($_POST['senha']);
 
     //Validaçao dos campos:
@@ -72,15 +72,33 @@ if (!empty($_POST)) {
     if ($valido) {
         $pdo = Banco::conectar();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = "INSERT INTO pessoa (nome, endereco, telefone, email, sexo,senha, login) VALUES(?,?,?,?,?,?,?)";
-        $q = $pdo->prepare($sql);
-        $q->execute(array($nome, $endereco, $telefone, $email, $sexo, $senha, $login));
-        Banco::desconectar();
-        // header("Location: index.php");    
-        $valido = $valido ? 'true' : 'false';
-        echo '[{"valido":' . $valido . '}]';
 
-    } else {
+        // Login e e-mail são únicos: não permitir cadastros duplicados.
+        $consulta = $pdo->prepare("SELECT COUNT(*) FROM pessoa WHERE login = ?");
+        $consulta->execute([$login]);
+        if ((int) $consulta->fetchColumn() > 0) {
+            $loginErro = 'Este login já está em uso.';
+            $valido = false;
+        }
+
+        $consulta = $pdo->prepare("SELECT COUNT(*) FROM pessoa WHERE email = ?");
+        $consulta->execute([$email]);
+        if ((int) $consulta->fetchColumn() > 0) {
+            $emailError = 'Este e-mail já está cadastrado.';
+            $valido = false;
+        }
+
+        if ($valido) {
+            $sql = "INSERT INTO pessoa (nome, endereco, telefone, email, sexo,senha, login) VALUES(?,?,?,?,?,?,?)";
+            $q = $pdo->prepare($sql);
+            $q->execute(array($nome, $endereco, $telefone, $email, $sexo, $senha, $login));
+            echo '[{"valido":true}]';
+        }
+
+        Banco::desconectar();
+    }
+
+    if (!$valido) {
         $valido = $valido ? 'true' : 'false';
         $temErroNome = $nomeError ? 'true' : 'false';
         $temErroEndereco = $enderecoErro ? 'true' : 'false';
