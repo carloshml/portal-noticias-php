@@ -85,81 +85,6 @@ if ($qtdSecundarias === 1) {
 	<?php include 'views/partials/site-header.php'; ?>
 
 	<main>
-		<!-- Hero -->
-		<section class="hero">
-			<div class="container">
-				<div class="row align-items-center g-5">
-					<div class="col-lg-8">
-						<?php if ($usuarioLogado): ?>
-							<span class="hero-eyebrow"><i class="fas fa-pen-nib"></i> Área do autor</span>
-							<h1 class="hero-title mt-3">Olá, <?= esc($nomeUsuario) ?>.</h1>
-							<p class="hero-lead mt-3">
-								Que bom ter você por aqui. Escreva uma nova notícia ou gerencie o que já foi publicado
-								na plataforma.
-							</p>
-							<div class="d-flex flex-wrap gap-2 mt-4">
-								<a class="btn btn-hero-light" href="views/noticia-form.php">
-									<i class="fas fa-pen-to-square me-2"></i>Escrever notícia
-								</a>
-								<a class="btn btn-hero-outline" href="views/listar_noticias.php">
-									<i class="fas fa-list me-2"></i>Ver todas as notícias
-								</a>
-							</div>
-						<?php else: ?>
-							<span class="hero-eyebrow"><i class="fas fa-bolt"></i> Notícias Atuais</span>
-							<h1 class="hero-title mt-3">
-								As notícias que importam,<br class="d-none d-md-block"> em um só lugar.
-							</h1>
-							<p class="hero-lead mt-3">
-								Acompanhe as publicações mais recentes da comunidade, descubra novos assuntos e
-								compartilhe o que acontece ao seu redor.
-							</p>
-							<div class="d-flex flex-wrap gap-2 mt-4">
-								<a class="btn btn-hero-light" href="#ultimas-noticias">
-									<i class="fas fa-book-open me-2"></i>Ler últimas notícias
-								</a>
-								<a class="btn btn-hero-outline" href="views/usuario-inscrevase.php">
-									<i class="fas fa-user-plus me-2"></i>Criar conta grátis
-								</a>
-							</div>
-							<p class="hero-note mt-3">
-								<i class="fas fa-lock-open"></i>Leitura gratuita — não é preciso criar conta para
-								acompanhar as notícias.
-							</p>
-						<?php endif; ?>
-					</div>
-
-					<div class="col-lg-4 d-none d-lg-block">
-						<aside class="hero-panel">
-							<?php if ($usuarioLogado): ?>
-								<p class="hero-panel__label">Sua atividade</p>
-								<p class="hero-panel__value"><?= $minhasNoticias ?></p>
-								<p class="hero-panel__caption">
-									<?= $minhasNoticias === 1 ? 'notícia publicada por você' : 'notícias publicadas por você' ?>
-								</p>
-								<hr>
-								<ul class="hero-panel__list">
-									<li><i class="fas fa-pen-nib"></i> Escreva novas notícias quando quiser</li>
-									<li><i class="fas fa-pen-to-square"></i> Edite suas publicações a qualquer momento
-									</li>
-								</ul>
-							<?php else: ?>
-								<p class="hero-panel__label">No ar agora</p>
-								<p class="hero-panel__value"><?= $totalNoSite ?></p>
-								<p class="hero-panel__caption">
-									<?= $totalNoSite === 1 ? 'notícia publicada pela comunidade' : 'notícias publicadas pela comunidade' ?>
-								</p>
-								<hr>
-								<ul class="hero-panel__list">
-									<li><i class="fas fa-lock-open"></i> Leitura gratuita, sem cadastro</li>
-									<li><i class="fas fa-pen-nib"></i> Publique suas próprias notícias</li>
-								</ul>
-							<?php endif; ?>
-						</aside>
-					</div>
-				</div>
-			</div>
-		</section>
 
 		<!-- Últimas notícias -->
 		<section id="ultimas-noticias" class="news-section">
@@ -167,7 +92,7 @@ if ($qtdSecundarias === 1) {
 				<div class="section-heading">
 					<div>
 						<span class="section-kicker">Últimas atualizações</span>
-						<h2 class="section-title">Últimas notícias</h2>
+						<h1 class="section-title">Últimas notícias</h1>
 						<p class="section-subtitle">Acompanhe o que foi publicado mais recentemente.</p>
 					</div>
 					<div class="d-flex flex-wrap align-items-center gap-2">
@@ -221,11 +146,11 @@ if ($qtdSecundarias === 1) {
 								<div class="featured-body">
 									<span class="chip-featured"><i class="fas fa-star"></i>Destaque</span>
 
-									<h3 class="featured-title">
+									<h2 class="featured-title">
 										<a href="<?= esc($destaque['urlLeitura']) ?>">
 											<?= esc($destaque['titulo']) ?>
 										</a>
-									</h3>
+									</h2>
 
 									<p class="featured-excerpt">
 										<?= esc(resumir($destaque['texto'], 260)) ?>
@@ -290,11 +215,11 @@ if ($qtdSecundarias === 1) {
 												<?php endif; ?>
 											</div>
 
-											<h3 class="news-card__title clamp-2">
+											<h2 class="news-card__title clamp-2">
 												<a href="<?= esc($noticia['urlLeitura']) ?>">
 													<?= esc($noticia['titulo']) ?>
 												</a>
-											</h3>
+											</h2>
 
 											<p class="news-card__excerpt clamp-3">
 												<?= esc(resumir($noticia['texto'], 150)) ?>
@@ -325,6 +250,82 @@ if ($qtdSecundarias === 1) {
 						</div>
 					<?php endif; ?>
 				<?php endif; ?>
+			</div>
+		</section>
+
+		<!-- Hero -->
+		<section class="hero">
+			<div class="container">
+				<div class="row align-items-center g-5">
+					<div class="col-lg-8">
+						<?php if ($usuarioLogado): ?>
+							<span class="hero-eyebrow"><i class="fas fa-pen-nib"></i> Área do autor</span>
+							<h2 class="hero-title mt-3">Olá, <?= esc($nomeUsuario) ?>.</h2>
+							<p class="hero-lead mt-3">
+								Que bom ter você por aqui. Escreva uma nova notícia ou gerencie o que já foi publicado
+								na plataforma.
+							</p>
+							<div class="d-flex flex-wrap gap-2 mt-4">
+								<a class="btn btn-hero-light" href="views/noticia-form.php">
+									<i class="fas fa-pen-to-square me-2"></i>Escrever notícia
+								</a>
+								<a class="btn btn-hero-outline" href="views/listar_noticias.php">
+									<i class="fas fa-list me-2"></i>Ver todas as notícias
+								</a>
+							</div>
+						<?php else: ?>
+							<span class="hero-eyebrow"><i class="fas fa-bolt"></i> Notícias Atuais</span>
+							<h2 class="hero-title mt-3">
+								As notícias que importam,<br class="d-none d-md-block"> em um só lugar.
+							</h2>
+							<p class="hero-lead mt-3">
+								Acompanhe as publicações mais recentes da comunidade, descubra novos assuntos e
+								compartilhe o que acontece ao seu redor.
+							</p>
+							<div class="d-flex flex-wrap gap-2 mt-4">
+								<a class="btn btn-hero-light" href="#ultimas-noticias">
+									<i class="fas fa-book-open me-2"></i>Ler últimas notícias
+								</a>
+								<a class="btn btn-hero-outline" href="views/usuario-inscrevase.php">
+									<i class="fas fa-user-plus me-2"></i>Criar conta grátis
+								</a>
+							</div>
+							<p class="hero-note mt-3">
+								<i class="fas fa-lock-open"></i>Leitura gratuita — não é preciso criar conta para
+								acompanhar as notícias.
+							</p>
+						<?php endif; ?>
+					</div>
+
+					<div class="col-lg-4 d-none d-lg-block">
+						<aside class="hero-panel">
+							<?php if ($usuarioLogado): ?>
+								<p class="hero-panel__label">Sua atividade</p>
+								<p class="hero-panel__value"><?= $minhasNoticias ?></p>
+								<p class="hero-panel__caption">
+									<?= $minhasNoticias === 1 ? 'notícia publicada por você' : 'notícias publicadas por você' ?>
+								</p>
+								<hr>
+								<ul class="hero-panel__list">
+									<li><i class="fas fa-pen-nib"></i> Escreva novas notícias quando quiser</li>
+									<li><i class="fas fa-pen-to-square"></i> Edite suas publicações a qualquer momento
+									</li>
+								</ul>
+							<?php else: ?>
+								<p class="hero-panel__label">No ar agora</p>
+								<p class="hero-panel__value"><?= $totalNoSite ?></p>
+								<p class="hero-panel__caption">
+									<?= $totalNoSite === 1 ? 'notícia publicada pela comunidade' : 'notícias publicadas pela comunidade' ?>
+								</p>
+								<hr>
+								<ul class="hero-panel__list">
+									<li><i class="fas fa-lock-open"></i> Leitura gratuita, sem cadastro</li>
+									<li><i class="fas fa-pen-nib"></i> Publique suas próprias notícias</li>
+								</ul>
+							<?php endif; ?>
+						</aside>
+					</div>
+				</div>
 			</div>
 		</section>
 
