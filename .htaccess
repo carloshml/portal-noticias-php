@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Canonicaliza a URL sem barra final para manter os caminhos relativos corretos
+RewriteCond %{REQUEST_URI} ^(.*)/noticias/$
+RewriteRule ^noticias/$ %1/noticias [R=301,QSA,L]
+
+# Página pública de leitura das notícias
+RewriteRule ^noticias$ noticias.php [L,QSA]

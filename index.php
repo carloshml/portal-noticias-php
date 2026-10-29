@@ -185,14 +185,14 @@ if ($qtdSecundarias === 1) {
 						<h2 class="section-title">Últimas notícias</h2>
 						<p class="section-subtitle">Acompanhe o que foi publicado mais recentemente.</p>
 					</div>
-					<div class="d-flex align-items-center gap-2">
+					<div class="d-flex flex-wrap align-items-center gap-2">
 						<span class="count-pill">
 							<i class="fas fa-newspaper"></i>
 							<?= pluralNoticias(count($publicacoes)) ?>
 						</span>
-						<?php if ($usuarioLogado): ?>
-							<a class="btn btn-ghost btn-sm" href="views/listar_noticias.php">Ver todas</a>
-						<?php endif; ?>
+						<a class="btn btn-brand btn-sm" href="<?= esc($urlNoticias) ?>">
+							<i class="fas fa-book-open me-2"></i>Ler todas as notícias
+						</a>
 					</div>
 				</div>
 

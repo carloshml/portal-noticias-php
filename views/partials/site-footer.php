@@ -22,10 +22,11 @@ $navUltimasHref = $navUltimasHref ?? $homeUrl . '#ultimas-noticias';
 				<h2 class="footer-title">Navegar</h2>
 				<ul class="footer-links">
 					<li><a href="<?= esc($navUltimasHref) ?>">Últimas notícias</a></li>
+					<li><a href="<?= esc($urlNoticias) ?>">Notícias</a></li>
 					<?php if ($usuarioLogado): ?>
 						<li><a href="views/home.php">Painel</a></li>
 						<li><a href="views/escrever_noticia.php">Escrever notícia</a></li>
-						<li><a href="views/listar_noticias.php">Todas as notícias</a></li>
+						<li><a href="views/listar_noticias.php">Gerenciar notícias</a></li>
 					<?php else: ?>
 						<li><a href="views/usuario-inscrevase.php">Criar conta</a></li>
 						<li><a href="#" data-bs-toggle="modal" data-bs-target="#modal_login">Entrar</a></li>

@@ -136,6 +136,11 @@ body.home {
   color: var(--home-primary-dark) !important;
 }
 
+.nav-link-soft[aria-current="page"] {
+  background: rgba(67, 97, 238, .08);
+  color: var(--home-primary-dark) !important;
+}
+
 .nav-actions {
   display: flex;
   align-items: center;

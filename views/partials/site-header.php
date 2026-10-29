@@ -24,9 +24,13 @@ $paginaAtual = $paginaAtual ?? 'home';
 					<li class="nav-item">
 						<a class="nav-link nav-link-soft" href="<?= esc($navUltimasHref) ?>">Últimas notícias</a>
 					</li>
+					<li class="nav-item">
+						<a class="nav-link nav-link-soft" href="<?= esc($urlNoticias) ?>"
+							<?= $paginaAtual === 'noticias' ? 'aria-current="page"' : '' ?>>Notícias</a>
+					</li>
 					<?php if ($usuarioLogado): ?>
 						<li class="nav-item">
-							<a class="nav-link nav-link-soft" href="views/listar_noticias.php">Todas as notícias</a>
+							<a class="nav-link nav-link-soft" href="views/listar_noticias.php">Gerenciar notícias</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link nav-link-soft" href="views/escrever_noticia.php">Escrever notícia</a>
@@ -57,7 +61,7 @@ $paginaAtual = $paginaAtual ?? 'home';
 								<li><a class="dropdown-item" href="views/escrever_noticia.php"><i
 											class="fas fa-pen-to-square"></i> Escrever notícia</a></li>
 								<li><a class="dropdown-item" href="views/listar_noticias.php"><i
-											class="fas fa-list"></i> Todas as notícias</a></li>
+											class="fas fa-list"></i> Gerenciar notícias</a></li>
 								<li>
 									<hr class="dropdown-divider">
 								</li>

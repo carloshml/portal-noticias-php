@@ -1,0 +1,203 @@
+/* ==========================================================================
+   Página pública de leitura — /noticias
+   ========================================================================== */
+
+.noticias-page {
+  background-color: var(--home-page);
+}
+
+.noticias-main {
+  flex: 1 0 auto;
+}
+
+/* Cabeçalho da página ------------------------------------------------------ */
+.noticias-hero {
+  padding: clamp(2.25rem, 4vw, 3.25rem) 0 1.75rem;
+  background: #fff;
+  border-bottom: 1px solid var(--home-line);
+}
+
+.noticias-hero .section-subtitle {
+  max-width: 40rem;
+}
+
+/* Conteúdo ----------------------------------------------------------------- */
+.noticias-content {
+  padding-top: clamp(2rem, 4vw, 3rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+/* Notícia principal -------------------------------------------------------- */
+.reader-card {
+  max-width: 1000px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, .06);
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: var(--home-shadow);
+}
+
+.reader-card::before {
+  content: "";
+  display: block;
+  height: 6px;
+  background: linear-gradient(90deg, var(--home-primary), var(--home-accent));
+}
+
+.reader-media {
+  max-height: 460px;
+  overflow: hidden;
+  background: #eef2ff;
+}
+
+.reader-media img {
+  display: block;
+  width: 100%;
+  max-height: 460px;
+  object-fit: cover;
+}
+
+.reader-body {
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.reader-topline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.reader-back {
+  color: var(--home-muted);
+  font-size: .875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color .2s ease;
+}
+
+.reader-back:hover,
+.reader-back:focus {
+  color: var(--home-primary-dark);
+}
+
+.reader-title {
+  margin: 0 0 1rem;
+  color: var(--home-ink);
+  font-size: clamp(1.8rem, 3.6vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -.03em;
+}
+
+.reader-meta {
+  margin-bottom: 1.25rem;
+}
+
+.reader-tags {
+  margin-bottom: 1.75rem;
+}
+
+.reader-text {
+  max-width: 72ch;
+  color: var(--home-body);
+  font-size: clamp(1rem, 1.15vw, 1.08rem);
+  line-height: 1.85;
+}
+
+.reader-text p {
+  margin: 0 0 1.35rem;
+}
+
+.reader-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* Notícias secundárias ----------------------------------------------------- */
+.reader-more {
+  max-width: 1000px;
+  margin: clamp(2rem, 4vw, 3rem) auto 0;
+}
+
+.reader-more__title {
+  margin: 0 0 1.25rem;
+  color: var(--home-ink);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+
+.reader-more .news-card__title {
+  font-size: 1rem;
+}
+
+/* Paginação ---------------------------------------------------------------- */
+.reader-pagination {
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
+}
+
+.reader-pagination .pagination {
+  gap: .35rem;
+}
+
+.reader-pagination .page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  padding: .55rem .8rem;
+  border: 1px solid var(--home-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--home-primary-dark);
+  font-size: .9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+
+.reader-pagination .page-link:hover,
+.reader-pagination .page-link:focus {
+  border-color: rgba(67, 97, 238, .35);
+  background: rgba(67, 97, 238, .06);
+  color: var(--home-primary-dark);
+}
+
+.reader-pagination .page-item.active .page-link {
+  border-color: var(--home-primary);
+  background: var(--home-primary);
+  color: #fff;
+}
+
+.reader-pagination .page-item.disabled .page-link {
+  border-color: var(--home-line);
+  background: #fff;
+  color: #b6c0d0;
+}
+
+.reader-pagination .page-item.disabled .page-link:hover {
+  border-color: var(--home-line);
+  background: #fff;
+  color: #b6c0d0;
+}
+
+/* Ajustes de leitura no celular ------------------------------------------- */
+@media (max-width: 575.98px) {
+  .reader-body {
+    padding: 1.35rem;
+  }
+
+  .reader-topline {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .65rem;
+  }
+
+  .reader-pagination .page-link {
+    min-width: 2.25rem;
+    padding: .5rem .65rem;
+  }
+}
