@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once('DAO/noticia.php');
+require_once('DAO/tag.php');
 require_once('views/partials/helpers.php');
 
 $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
@@ -13,31 +14,81 @@ $erro = 0;
 $usuarioLogado = isset($_SESSION['id_usuario']);
 $nomeUsuario = $usuarioLogado ? (string) $_SESSION['nome_usuario'] : '';
 
+$tagService = new TagService();
+$tagSolicitada = isset($_GET['tag']) ? trim((string) $_GET['tag']) : '';
+$tagSelecionada = null;
+$tagInvalida = false;
+
+if ($tagSolicitada !== '') {
+	$tagSelecionada = $tagService->buscarPorNome($tagSolicitada);
+	if (!$tagSelecionada) {
+		$tagInvalida = true;
+	}
+}
+
 $servicoNoticia = new NoticiaService();
-$totalNoticias = (int) $servicoNoticia->numeroTotalNoticias();
 $porPagina = 4;
+
+if ($tagSelecionada) {
+	$totalNoticias = $servicoNoticia->numeroTotalNoticiasPorTag((int) $tagSelecionada['id']);
+} elseif ($tagInvalida) {
+	$totalNoticias = 0;
+} else {
+	$totalNoticias = (int) $servicoNoticia->numeroTotalNoticias();
+}
+
 $totalPaginas = max(1, (int) ceil($totalNoticias / $porPagina));
 
 $pagina = isset($_GET['pagina']) && is_numeric($_GET['pagina']) ? (int) $_GET['pagina'] : 1;
 $pagina = max(1, $pagina);
 
 $noticiaId = isset($_GET['noticia']) && is_numeric($_GET['noticia']) ? (int) $_GET['noticia'] : 0;
+if ($tagInvalida) {
+	$noticiaId = 0;
+}
 $temNoticiaSelecionada = false;
+
+$urlComTag = fn(string $nome): string => $urlNoticias . '?tag=' . urlencode($nome);
 
 if ($noticiaId > 0) {
 	$encontradas = $servicoNoticia->findById($noticiaId);
 	if (empty($encontradas)) {
-		header('Location: ' . $urlNoticias);
+		$destino = $tagSelecionada ? $urlComTag($tagSelecionada['nome']) : $urlNoticias;
+		header('Location: ' . $destino);
 		exit;
 	}
 
+	if ($tagSelecionada) {
+		$tagsDoArtigo = array_map(
+			static fn($tag) => mb_strtolower((string) $tag, 'UTF-8'),
+			$encontradas[0]['tags'] ?? []
+		);
+		if (!in_array(mb_strtolower($tagSelecionada['nome'], 'UTF-8'), $tagsDoArtigo, true)) {
+			header('Location: ' . $urlComTag($tagSelecionada['nome']));
+			exit;
+		}
+
+		$pagina = intdiv(
+			$servicoNoticia->contarMaisRecentesQuePorTag($noticiaId, (int) $tagSelecionada['id']),
+			$porPagina
+		) + 1;
+	} else {
+		$pagina = intdiv($servicoNoticia->contarMaisRecentesQue($noticiaId), $porPagina) + 1;
+	}
+
 	$temNoticiaSelecionada = true;
-	$pagina = intdiv($servicoNoticia->contarMaisRecentesQue($noticiaId), $porPagina) + 1;
 }
 
 $pagina = min($pagina, $totalPaginas);
 $offset = ($pagina - 1) * $porPagina;
-$registros = $servicoNoticia->getNoticiasPaginadas($porPagina, $offset);
+
+if ($tagSelecionada) {
+	$registros = $servicoNoticia->getNoticiasPaginadasPorTag((int) $tagSelecionada['id'], $porPagina, $offset);
+} elseif ($tagInvalida) {
+	$registros = [];
+} else {
+	$registros = $servicoNoticia->getNoticiasPaginadas($porPagina, $offset);
+}
 
 /* Coloca a notícia selecionada em destaque e mantém as outras da mesma página. */
 if ($temNoticiaSelecionada) {
@@ -112,10 +163,27 @@ if ($totalPaginas <= 7) {
 	$paginasVisiveis[] = $totalPaginas;
 }
 
-$urlPagina = $urlNoticias . '?pagina=';
-$urlDaNoticia = fn(int $id): string => $urlNoticias . '?noticia=' . $id;
+$urlPagina = function (int $numero) use ($urlNoticias, $tagSelecionada): string {
+	$params = ['pagina' => $numero];
+	if ($tagSelecionada) {
+		$params['tag'] = $tagSelecionada['nome'];
+	}
+	return $urlNoticias . '?' . http_build_query($params);
+};
 
-$pageTitle = 'Notícias — Notícias Atuais';
+$urlDaNoticia = function (int $id) use ($urlNoticias, $tagSelecionada): string {
+	$params = ['noticia' => $id];
+	if ($tagSelecionada) {
+		$params['tag'] = $tagSelecionada['nome'];
+	}
+	return $urlNoticias . '?' . http_build_query($params);
+};
+
+$urlTag = fn(string $nome): string => $urlNoticias . '?tag=' . urlencode($nome);
+
+$pageTitle = $tagSelecionada
+	? 'Notícias sobre "' . $tagSelecionada['nome'] . '" — Notícias Atuais'
+	: 'Notícias — Notícias Atuais';
 $pageDescription = 'Leia a notícia completa e acompanhe as últimas publicações da plataforma Notícias Atuais.';
 $pageStyles = ['assets/css/noticias.css'];
 ?>
@@ -131,11 +199,32 @@ $pageStyles = ['assets/css/noticias.css'];
 	<main id="conteudo">
 		<section class="noticias-hero">
 			<div class="container">
-				<span class="section-kicker">Leitura</span>
-				<h1 class="section-title">Notícias</h1>
+				<span class="section-kicker">
+					<?= $tagSelecionada ? 'Filtro por tag' : ($tagInvalida ? 'Filtro' : 'Leitura') ?>
+				</span>
+				<h1 class="section-title">
+					<?php if ($tagSelecionada): ?>
+						Notícias sobre “<?= esc($tagSelecionada['nome']) ?>”
+					<?php elseif ($tagInvalida): ?>
+						Tag não encontrada
+					<?php else: ?>
+						Notícias
+					<?php endif; ?>
+				</h1>
 				<p class="section-subtitle">
-					A notícia mais recente em destaque e as últimas publicações para continuar lendo.
+					<?php if ($tagSelecionada): ?>
+						<?= pluralNoticias($totalNoticias, 'notícia encontrada', 'notícias encontradas') ?> com esta tag.
+					<?php elseif ($tagInvalida): ?>
+						A tag “<?= esc($tagSolicitada) ?>” não existe.
+					<?php else: ?>
+						A notícia mais recente em destaque e as últimas publicações para continuar lendo.
+					<?php endif; ?>
 				</p>
+				<?php if ($tagSelecionada || $tagInvalida): ?>
+					<a class="btn btn-ghost btn-sm mt-2" href="<?= esc($urlNoticias) ?>">
+						<i class="fas fa-times me-1"></i>Limpar filtro
+					</a>
+				<?php endif; ?>
 			</div>
 		</section>
 
@@ -143,13 +232,27 @@ $pageStyles = ['assets/css/noticias.css'];
 			<?php if (!$principal): ?>
 				<div class="empty-state">
 					<div class="empty-state__icon"><i class="fas fa-newspaper"></i></div>
-					<h3 class="mb-2">Nenhuma notícia publicada ainda</h3>
+					<h3 class="mb-2">
+						<?= $tagInvalida
+							? 'Tag não encontrada'
+							: ($tagSelecionada ? 'Nenhuma notícia com esta tag' : 'Nenhuma notícia publicada ainda') ?>
+					</h3>
 					<p class="mb-0">
-						Assim que a primeira publicação sair, ela aparece aqui para leitura.
+						<?php if ($tagSelecionada || $tagInvalida): ?>
+							Não encontramos publicações para este filtro. Tente outra tag ou veja todas as notícias.
+						<?php else: ?>
+							Assim que a primeira publicação sair, ela aparece aqui para leitura.
+						<?php endif; ?>
 					</p>
-					<a class="btn btn-brand mt-4" href="<?= esc($homeUrl) ?>">
-						<i class="fas fa-arrow-left me-2"></i>Voltar para a home
-					</a>
+					<?php if ($tagSelecionada || $tagInvalida): ?>
+						<a class="btn btn-brand mt-4" href="<?= esc($urlNoticias) ?>">
+							<i class="fas fa-newspaper me-2"></i>Ver todas as notícias
+						</a>
+					<?php else: ?>
+						<a class="btn btn-brand mt-4" href="<?= esc($homeUrl) ?>">
+							<i class="fas fa-arrow-left me-2"></i>Voltar para a home
+						</a>
+					<?php endif; ?>
 				</div>
 			<?php else: ?>
 				<article class="reader-card">
@@ -165,7 +268,7 @@ $pageStyles = ['assets/css/noticias.css'];
 							<span class="chip-featured"><i class="fas fa-book-open"></i> Leitura</span>
 
 							<?php if ($temNoticiaSelecionada): ?>
-								<a class="reader-back" href="<?= esc($urlPagina . $pagina) ?>">
+								<a class="reader-back" href="<?= esc($urlPagina($pagina)) ?>">
 									<i class="fas fa-arrow-left"></i> Voltar para a lista
 								</a>
 							<?php endif; ?>
@@ -183,7 +286,8 @@ $pageStyles = ['assets/css/noticias.css'];
 						<?php if ($principal['tags']): ?>
 							<div class="tag-list reader-tags">
 								<?php foreach ($principal['tags'] as $tag): ?>
-									<span class="tag"><?= esc($tag) ?></span>
+									<a class="tag" href="<?= esc($urlTag($tag)) ?>"
+										title="Filtrar notícias por <?= esc($tag) ?>"><?= esc($tag) ?></a>
 								<?php endforeach; ?>
 							</div>
 						<?php endif; ?>
@@ -235,7 +339,8 @@ $pageStyles = ['assets/css/noticias.css'];
 											<?php if ($noticia['tags']): ?>
 												<div class="tag-list mb-0">
 													<?php foreach ($noticia['tags'] as $tag): ?>
-														<span class="tag"><?= esc($tag) ?></span>
+														<a class="tag" href="<?= esc($urlTag($tag)) ?>"
+										title="Filtrar notícias por <?= esc($tag) ?>"><?= esc($tag) ?></a>
 													<?php endforeach; ?>
 												</div>
 											<?php endif; ?>
@@ -263,7 +368,7 @@ $pageStyles = ['assets/css/noticias.css'];
 						<ul class="pagination justify-content-center flex-wrap mb-0">
 							<li class="page-item <?= $pagina <= 1 ? 'disabled' : '' ?>">
 								<?php if ($pagina > 1): ?>
-									<a class="page-link" href="<?= esc($urlPagina . ($pagina - 1)) ?>" rel="prev">
+									<a class="page-link" href="<?= esc($urlPagina($pagina - 1)) ?>" rel="prev">
 										<i class="fas fa-chevron-left me-1"></i>Anterior
 									</a>
 								<?php else: ?>
@@ -276,7 +381,7 @@ $pageStyles = ['assets/css/noticias.css'];
 									<li class="page-item disabled"><span class="page-link">…</span></li>
 								<?php else: ?>
 									<li class="page-item <?= (int) $numeroPagina === $pagina ? 'active' : '' ?>">
-										<a class="page-link" href="<?= esc($urlPagina . $numeroPagina) ?>"
+										<a class="page-link" href="<?= esc($urlPagina($numeroPagina)) ?>"
 											<?= (int) $numeroPagina === $pagina ? 'aria-current="page"' : '' ?>>
 											<?= (int) $numeroPagina ?>
 										</a>
@@ -286,7 +391,7 @@ $pageStyles = ['assets/css/noticias.css'];
 
 							<li class="page-item <?= $pagina >= $totalPaginas ? 'disabled' : '' ?>">
 								<?php if ($pagina < $totalPaginas): ?>
-									<a class="page-link" href="<?= esc($urlPagina . ($pagina + 1)) ?>" rel="next">
+									<a class="page-link" href="<?= esc($urlPagina($pagina + 1)) ?>" rel="next">
 										Próxima<i class="fas fa-chevron-right ms-1"></i>
 									</a>
 								<?php else: ?>

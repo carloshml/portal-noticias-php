@@ -94,6 +94,49 @@ class NoticiaService
         return (int) $stmt->fetchColumn();
     }
 
+    public function numeroTotalNoticiasPorTag($tag_id)
+    {
+        $sql = "SELECT COUNT(*)
+                FROM noticia n
+                INNER JOIN noticia_tags nt ON nt.noticia_id = n.id
+                WHERE nt.tag_id = :tag_id";
+        $stmt = $this->link->prepare($sql);
+        $stmt->bindValue(":tag_id", (int) $tag_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function contarMaisRecentesQuePorTag($id_noticia, $tag_id)
+    {
+        $sql = "SELECT COUNT(*)
+                FROM noticia n
+                INNER JOIN noticia_tags nt ON nt.noticia_id = n.id
+                WHERE nt.tag_id = :tag_id AND n.id > :id_noticia";
+        $stmt = $this->link->prepare($sql);
+        $stmt->bindValue(":tag_id", (int) $tag_id, PDO::PARAM_INT);
+        $stmt->bindValue(":id_noticia", (int) $id_noticia, PDO::PARAM_INT);
+        $stmt->execute();
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function getNoticiasPaginadasPorTag($tag_id, $limite, $offset)
+    {
+        $sql = "SELECT n.id as noticia_id, n.data_criacao, n.titulo, n.texto, n.foto,
+                       p.nome as nome_autor
+                FROM noticia n
+                INNER JOIN noticia_tags nt ON nt.noticia_id = n.id
+                INNER JOIN pessoa p ON p.id = n.id_autor
+                WHERE nt.tag_id = :tag_id
+                ORDER BY n.id DESC
+                LIMIT :limite OFFSET :offset";
+        $stmt = $this->link->prepare($sql);
+        $stmt->bindValue(":tag_id", (int) $tag_id, PDO::PARAM_INT);
+        $stmt->bindValue(":limite", (int) $limite, PDO::PARAM_INT);
+        $stmt->bindValue(":offset", (int) $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $this->anexarTags($stmt->fetchAll(PDO::FETCH_ASSOC));
+    }
+
     public function getNoticiasPaginadas($limite, $offset)
     {
         $sql = "SELECT noticia.id as noticia_id , data_criacao,titulo, texto, foto,"

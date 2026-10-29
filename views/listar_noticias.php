@@ -167,7 +167,11 @@ if ($totalPaginas <= 7) {
                             <div class="mt-3 mb-4">
                                 <?php foreach (['tag1', 'tag2', 'tag3'] as $tag):
                                     if (!empty($row[$tag])): ?>
-                                        <span class="tag-badge"><?= htmlspecialchars($row[$tag]) ?></span>
+                                        <a class="tag-badge text-decoration-none"
+                                            href="../noticias?tag=<?= urlencode($row[$tag]) ?>"
+                                            title="Filtrar notícias por <?= htmlspecialchars($row[$tag]) ?>">
+                                            <?= htmlspecialchars($row[$tag]) ?>
+                                        </a>
                                     <?php endif;
                                 endforeach; ?>
                             </div>

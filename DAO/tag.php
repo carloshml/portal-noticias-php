@@ -33,6 +33,23 @@ class TagService
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /** Busca uma tag pelo nome (a collation do banco é case-insensitive). */
+    public function buscarPorNome($nome): ?array
+    {
+        $nome = trim((string) $nome);
+        if ($nome === '') {
+            return null;
+        }
+
+        $stmt = $this->link->prepare(
+            'SELECT id, nome, ultima_utilizacao FROM tags WHERE nome = ? LIMIT 1'
+        );
+        $stmt->execute([$nome]);
+        $tag = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $tag ?: null;
+    }
+
     /** Retorna um mapa noticia_id => lista de nomes de tags. */
     public function tagsPorNoticias(array $ids): array
     {

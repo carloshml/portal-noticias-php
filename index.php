@@ -234,7 +234,7 @@ if ($qtdSecundarias === 1) {
 									<?php if ($destaque['tags']): ?>
 										<div class="tag-list">
 											<?php foreach ($destaque['tags'] as $tag): ?>
-												<span class="tag"><?= esc($tag) ?></span>
+												<a class="tag" href="noticias?tag=<?= urlencode($tag) ?>" title="Filtrar notícias por <?= esc($tag) ?>"><?= esc($tag) ?></a>
 											<?php endforeach; ?>
 										</div>
 									<?php endif; ?>
@@ -303,7 +303,7 @@ if ($qtdSecundarias === 1) {
 											<?php if ($noticia['tags']): ?>
 												<div class="tag-list mb-0">
 													<?php foreach ($noticia['tags'] as $tag): ?>
-														<span class="tag"><?= esc($tag) ?></span>
+														<a class="tag" href="noticias?tag=<?= urlencode($tag) ?>" title="Filtrar notícias por <?= esc($tag) ?>"><?= esc($tag) ?></a>
 													<?php endforeach; ?>
 												</div>
 											<?php endif; ?>

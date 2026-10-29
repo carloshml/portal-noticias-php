@@ -605,6 +605,12 @@ body.home {
   text-decoration: none;
 }
 
+.tag:hover,
+.tag:focus {
+  background: rgba(67, 97, 238, .16);
+  color: var(--home-primary-dark);
+}
+
 .meta-row {
   display: flex;
   flex-wrap: wrap;
