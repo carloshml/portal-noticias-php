@@ -460,6 +460,37 @@ if ($qtdSecundarias === 1) {
 			</div>
 		</section>
 
+		<?php if (!$usuarioLogado && $destaque): ?>
+			<!-- Convite para participar -->
+			<section class="pb-5">
+				<div class="container">
+					<div class="join-band">
+						<div class="join-inner">
+							<div class="row align-items-center g-4">
+								<div class="col-lg-8">
+									<span class="join-kicker"><i class="fas fa-bullhorn"></i> Participe</span>
+									<h2 class="join-title">Tem uma notícia para contar?</h2>
+									<p class="join-text mb-0">
+										Crie sua conta gratuita para publicar, editar e gerenciar suas notícias na
+										plataforma. Leva menos de um minuto.
+									</p>
+								</div>
+								<div
+									class="col-lg-4 d-flex flex-column flex-sm-row flex-lg-column justify-content-lg-center gap-2">
+									<button class="btn btn-hero-light" type="button" data-bs-toggle="modal"
+										data-bs-target="#modal_login">
+										<i class="fas fa-right-to-bracket me-2"></i>Entrar
+									</button>
+									<a class="btn btn-hero-outline" href="views/usuario-inscrevase.php">
+										<i class="fas fa-user-plus me-2"></i>Criar conta grátis
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		<?php endif; ?>
 	</main>
 
 	<!-- Rodapé -->

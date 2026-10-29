@@ -805,6 +805,59 @@ body.home {
   color: var(--home-muted);
 }
 
+/* Faixa de convite (visitantes) ------------------------------------------ */
+.join-band {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(2rem, 4vw, 3.25rem);
+  border-radius: 26px;
+  background: linear-gradient(120deg, #0b1220 0%, #172554 55%, #1e3a8a 100%);
+  color: #fff;
+  box-shadow: 0 30px 60px -40px rgba(15, 23, 42, .9);
+}
+
+.join-band::before {
+  content: "";
+  position: absolute;
+  top: -12rem;
+  right: -8rem;
+  width: 26rem;
+  height: 26rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(76, 201, 240, .5), transparent 65%);
+  pointer-events: none;
+}
+
+.join-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.join-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  color: var(--home-accent);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.join-title {
+  margin: .85rem 0 .6rem;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+}
+
+.join-text {
+  max-width: 38rem;
+  margin: 0;
+  color: rgba(255, 255, 255, .78);
+  line-height: 1.7;
+}
+
 /* Rodapé ------------------------------------------------------------------ */
 .site-footer {
   margin-top: auto;
