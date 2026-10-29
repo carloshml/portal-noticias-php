@@ -6,6 +6,7 @@ if (!isset($_SESSION['id_usuario'])) {
 }
 
 require_once('../DAO/noticia.php');
+require_once('../DAO/tag.php');
 
 $nome_usuario = (string) $_SESSION['nome_usuario'];
 $id_usuario = (int) $_SESSION['id_usuario'];
@@ -68,6 +69,9 @@ if ($noticia && !empty($noticia['foto'])) {
 
 $action = $modoEdicao ? '../services/noticia_update.php' : '../services/noticia_salvar.php';
 $pageTitle = $modoEdicao ? 'Editar notícia — Notícias Atuais' : 'Nova notícia — Notícias Atuais';
+
+$tagService = new TagService();
+$tagsRecentes = $tagService->getRecentes(5);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -167,20 +171,37 @@ $pageTitle = $modoEdicao ? 'Editar notícia — Notícias Atuais' : 'Nova notíc
 						</div>
 					</div>
 
-					<div class="row g-3 mb-4">
+					<div class="row g-3 mb-2">
 						<div class="col-md">
-							<input type="text" name="tag1" id="tag1" class="form-control" placeholder="Tag 1"
+							<input type="text" name="tag1" id="tag1" class="form-control tag-input" placeholder="Tag 1"
 								maxlength="10" value="<?= htmlspecialchars($valores['tag1'], ENT_QUOTES, 'UTF-8') ?>">
 						</div>
 						<div class="col-md">
-							<input type="text" name="tag2" id="tag2" class="form-control" placeholder="Tag 2"
+							<input type="text" name="tag2" id="tag2" class="form-control tag-input" placeholder="Tag 2"
 								maxlength="10" value="<?= htmlspecialchars($valores['tag2'], ENT_QUOTES, 'UTF-8') ?>">
 						</div>
 						<div class="col-md">
-							<input type="text" name="tag3" id="tag3" class="form-control" placeholder="Tag 3"
+							<input type="text" name="tag3" id="tag3" class="form-control tag-input" placeholder="Tag 3"
 								maxlength="10" value="<?= htmlspecialchars($valores['tag3'], ENT_QUOTES, 'UTF-8') ?>">
 						</div>
 					</div>
+
+					<?php if ($tagsRecentes): ?>
+						<div class="mb-4">
+							<span class="form-label d-block mb-2">Usadas recentemente</span>
+							<div class="d-flex flex-wrap gap-2">
+								<?php foreach ($tagsRecentes as $tagRecente): ?>
+									<button type="button" class="btn btn-sm btn-outline-primary rounded-pill tag-suggestion"
+										data-tag="<?= htmlspecialchars($tagRecente['nome'], ENT_QUOTES, 'UTF-8') ?>">
+										<i class="fas fa-plus me-1"></i><?= htmlspecialchars($tagRecente['nome'], ENT_QUOTES, 'UTF-8') ?>
+									</button>
+								<?php endforeach; ?>
+							</div>
+							<small id="tagSuggestionHelp" class="text-muted d-block mt-2">
+								Clique para preencher a primeira tag vazia.
+							</small>
+						</div>
+					<?php endif; ?>
 
 					<div class="d-flex justify-content-between align-items-center">
 						<a href="listar_noticias.php" class="btn btn-outline-secondary">Cancelar</a>
