@@ -158,7 +158,10 @@ if (!isset($_SESSION['id_usuario'])) {
         <div class="col-md-6">
           <h2 class="mb-0"><i class="fas fa-users me-2"></i>Gerenciar Usuários</h2>
         </div>
-        <div class="col-md-6 text-md-end">
+        <div class="col-md-6 text-md-end d-flex flex-wrap justify-content-md-end gap-2">
+          <a href="home.php" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Voltar
+          </a>
           <button id="btn_abrir_modal_para_inserir" type="button" class="btn btn-add text-white" data-bs-toggle="modal"
             data-bs-target="#createModal">
             <i class="fas fa-plus me-2"></i>Novo Contato
