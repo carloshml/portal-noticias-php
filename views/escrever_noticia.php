@@ -56,7 +56,7 @@ $noticia = $_GET['noticia'] ?? '{}';
       <div class="card-header text-white d-flex flex-wrap justify-content-between align-items-center gap-2"
         style="background-color: var(--primary-color);">
         <h4 class="mb-0">Escreva Sua Notícia</h4>
-        <a href="../index.php" class="btn btn-sm btn-light" aria-label="Voltar para a página inicial">
+        <a href="home.php" class="btn btn-sm btn-light" aria-label="Voltar para o painel">
           <i class="fas fa-arrow-left me-2"></i>Voltar
         </a>
       </div>
