@@ -44,14 +44,13 @@ if ($totalPaginas <= 7) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        form {
-            position: relative !important;
+        .news-card {
+            position: relative;
         }
 
-        .form-edit-btn {
-            position: absolute;
+        .news-card .edit-btn {
             top: 1rem;
-            left: 1rem;
+            right: 1rem;
             z-index: 10;
         }
 
@@ -122,6 +121,13 @@ if ($totalPaginas <= 7) {
                 <i class="fas fa-arrow-left me-2"></i>Voltar
             </a>
         </div>
+
+        <?php if (isset($_GET['sucesso']) && (int) $_GET['sucesso'] === 1): ?>
+            <div class="alert alert-success" role="alert">Notícia publicada com sucesso.</div>
+        <?php elseif (isset($_GET['atualizado']) && (int) $_GET['atualizado'] === 1): ?>
+            <div class="alert alert-success" role="alert">Notícia atualizada com sucesso.</div>
+        <?php endif; ?>
+
         <div class="row">
             <?php foreach ($noticias as $row):
                 $foto_content = $row['foto'];
@@ -131,30 +137,16 @@ if ($totalPaginas <= 7) {
                 $base64 = $foto_content ? base64_encode($foto_content) : '';
 
                 $dataCriacao = date('d/m/Y', strtotime($row['data_criacao']));
-
-                $array = [
-                    "noticia_id" => $row['noticia_id'],
-                    "titulo" => $row['titulo'],
-                    "texto" => $row['texto'],
-                    "tag1" => $row['tag1'],
-                    "tag2" => $row['tag2'],
-                    "tag3" => $row['tag3'],
-                    "nomeAutor" => $row['nome_autor'],
-                    "dataCriacao" => $dataCriacao
-                ];
                 ?>
 
                 <div class="col-md-4 mb-3">
                     <div class="news-card">
                         <?php if (isset($_SESSION['id_usuario'])): ?>
-                            <form method="post" enctype="multipart/form-data"
-                                action="views/escrever_noticia.php?noticia_id=<?= $row['noticia_id'] ?>&erro=Edite Sua Noticia&noticia=<?= urlencode(json_encode($array)) ?>"
-                                class="form-edit-btn">
-                                <button class="btn btn-sm btn-primary rounded-circle edit-btn" type="submit"
-                                    title="Editar Notícia">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </form>
+                            <a class="btn btn-sm btn-primary rounded-circle edit-btn"
+                                href="noticia-form.php?noticia_id=<?= (int) $row['noticia_id'] ?>"
+                                title="Editar notícia" aria-label="Editar notícia">
+                                <i class="fas fa-edit"></i>
+                            </a>
                         <?php endif; ?>
 
                         <?php if ($base64): ?>

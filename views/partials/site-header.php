@@ -33,7 +33,7 @@ $paginaAtual = $paginaAtual ?? 'home';
 							<a class="nav-link nav-link-soft" href="views/listar_noticias.php">Gerenciar notícias</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link nav-link-soft" href="views/escrever_noticia.php">Escrever notícia</a>
+							<a class="nav-link nav-link-soft" href="views/noticia-form.php">Escrever notícia</a>
 						</li>
 					<?php endif; ?>
 				</ul>
@@ -58,7 +58,7 @@ $paginaAtual = $paginaAtual ?? 'home';
 								</li>
 								<li><a class="dropdown-item" href="views/home.php"><i class="fas fa-gauge-high"></i>
 										Painel</a></li>
-								<li><a class="dropdown-item" href="views/escrever_noticia.php"><i
+								<li><a class="dropdown-item" href="views/noticia-form.php"><i
 											class="fas fa-pen-to-square"></i> Escrever notícia</a></li>
 								<li><a class="dropdown-item" href="views/listar_noticias.php"><i
 											class="fas fa-list"></i> Gerenciar notícias</a></li>

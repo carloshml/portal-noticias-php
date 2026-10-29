@@ -85,7 +85,7 @@ $email_usuario = $_SESSION['email_usuario'];
           </div>
           <h5 class="fw-bold mb-3">Escrever Notícia</h5>
           <p class="text-muted mb-4">Crie uma nova notícia para publicação</p>
-          <a href="escrever_noticia.php" class="btn btn-primary w-100">
+          <a href="noticia-form.php" class="btn btn-primary w-100">
             Acessar <i class="fas fa-arrow-right ms-2"></i>
           </a>
         </div>

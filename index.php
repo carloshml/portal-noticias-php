@@ -43,21 +43,6 @@ if (is_array($noticias)) {
 			? date('d/m/Y', strtotime($row['data_criacao']))
 			: '';
 
-		$payload = [
-			'noticia_id' => $row['noticia_id'],
-			'titulo' => $row['titulo'],
-			'texto' => $row['texto'],
-			'tag1' => $row['tag1'],
-			'tag2' => $row['tag2'],
-			'tag3' => $row['tag3'],
-			'nomeAutor' => $row['nome_autor'],
-			'dataCriacao' => $dataCriacao,
-		];
-
-		$parametros = 'noticia_id=' . (int) $row['noticia_id']
-			. '&erro=' . urlencode('Edite Sua Noticia')
-			. '&noticia=' . urlencode(json_encode($payload, JSON_INVALID_UTF8_SUBSTITUTE));
-
 		$publicacoes[] = [
 			'id' => (int) $row['noticia_id'],
 			'titulo' => (string) $row['titulo'],
@@ -71,7 +56,7 @@ if (is_array($noticias)) {
 			'imagem' => $base64,
 			'mime' => $mime,
 			'urlLeitura' => 'noticias?noticia=' . (int) $row['noticia_id'],
-			'urlEdicao' => 'views/escrever_noticia.php?' . $parametros,
+			'urlEdicao' => 'views/noticia-form.php?noticia_id=' . (int) $row['noticia_id'],
 		];
 	}
 }
@@ -113,7 +98,7 @@ if ($qtdSecundarias === 1) {
 								na plataforma.
 							</p>
 							<div class="d-flex flex-wrap gap-2 mt-4">
-								<a class="btn btn-hero-light" href="views/escrever_noticia.php">
+								<a class="btn btn-hero-light" href="views/noticia-form.php">
 									<i class="fas fa-pen-to-square me-2"></i>Escrever notícia
 								</a>
 								<a class="btn btn-hero-outline" href="views/listar_noticias.php">
@@ -207,7 +192,7 @@ if ($qtdSecundarias === 1) {
 						</p>
 						<div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
 							<?php if ($usuarioLogado): ?>
-								<a class="btn btn-brand" href="views/escrever_noticia.php">
+								<a class="btn btn-brand" href="views/noticia-form.php">
 									<i class="fas fa-pen-to-square me-2"></i>Escrever a primeira notícia
 								</a>
 							<?php else: ?>

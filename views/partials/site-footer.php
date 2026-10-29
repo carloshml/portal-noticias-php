@@ -25,7 +25,7 @@ $navUltimasHref = $navUltimasHref ?? $homeUrl . '#ultimas-noticias';
 					<li><a href="<?= esc($urlNoticias) ?>">Notícias</a></li>
 					<?php if ($usuarioLogado): ?>
 						<li><a href="views/home.php">Painel</a></li>
-						<li><a href="views/escrever_noticia.php">Escrever notícia</a></li>
+						<li><a href="views/noticia-form.php">Escrever notícia</a></li>
 						<li><a href="views/listar_noticias.php">Gerenciar notícias</a></li>
 					<?php else: ?>
 						<li><a href="views/usuario-inscrevase.php">Criar conta</a></li>
