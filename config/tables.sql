@@ -7,7 +7,9 @@ CREATE TABLE pessoa (
   telefone VARCHAR(35) COLLATE utf8_unicode_ci NOT NULL,
   email VARCHAR(40) COLLATE utf8_unicode_ci NOT NULL,
   sexo VARCHAR(1) COLLATE utf8_unicode_ci NOT NULL,
-  senha VARCHAR(255) NOT NULL
+  senha VARCHAR(255) NOT NULL,
+  UNIQUE KEY uq_pessoa_login (login),
+  UNIQUE KEY uq_pessoa_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Tabela: noticia
