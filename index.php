@@ -70,7 +70,7 @@ if (is_array($noticias)) {
 			'data' => $dataCriacao,
 			'imagem' => $base64,
 			'mime' => $mime,
-			'urlLeitura' => 'views/noticia-read.php?' . $parametros,
+			'urlLeitura' => 'noticias?noticia=' . (int) $row['noticia_id'],
 			'urlEdicao' => 'views/escrever_noticia.php?' . $parametros,
 		];
 	}

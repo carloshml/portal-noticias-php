@@ -166,7 +166,7 @@ if ($totalPaginas <= 7) {
                             <h2 class="news-title">
 
                                 <a
-                                    href="noticia-read.php?noticia_id=<?= $row['noticia_id'] ?>&erro=Edite Sua Noticia&noticia=<?= urlencode(json_encode($array)) ?>">
+                                    href="../noticias?noticia=<?= (int) $row['noticia_id'] ?>">
                                     <?= htmlspecialchars($row['titulo']) ?> </a>
 
                             </h2>
