@@ -930,6 +930,126 @@ body.home {
   color: #f87171;
 }
 
+/* Modal de login ---------------------------------------------------------- */
+.login-modal .modal-content {
+  overflow: hidden;
+  border: 0;
+  border-radius: 24px;
+  box-shadow: 0 40px 90px -30px rgba(2, 6, 23, .7);
+}
+
+.login-aside {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, #4361ee 0%, #3f37c9 55%, #241d6b 100%);
+  color: #fff;
+}
+
+.login-aside::after {
+  content: "";
+  position: absolute;
+  right: -6rem;
+  bottom: -8rem;
+  width: 18rem;
+  height: 18rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(76, 201, 240, .45), transparent 70%);
+  pointer-events: none;
+}
+
+.login-aside > * {
+  position: relative;
+  z-index: 1;
+}
+
+.login-aside__title {
+  margin: 0 0 .75rem;
+  font-size: clamp(1.35rem, 2vw, 1.6rem);
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+
+.login-aside__text {
+  color: rgba(255, 255, 255, .8);
+  font-size: .92rem;
+  line-height: 1.7;
+}
+
+.login-aside__list {
+  display: grid;
+  gap: .6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: rgba(255, 255, 255, .9);
+  font-size: .875rem;
+}
+
+.login-aside__list i {
+  margin-right: .5rem;
+  color: var(--home-accent);
+}
+
+.login-modal .form-control {
+  padding: 1rem .95rem;
+  border-color: var(--home-line);
+  border-radius: 10px;
+}
+
+.login-modal .form-control:focus {
+  border-color: var(--home-primary);
+  box-shadow: 0 0 0 .22rem rgba(67, 97, 238, .16);
+}
+
+.login-modal .form-floating > label {
+  color: var(--home-muted);
+}
+
+.login-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  padding: .75rem .9rem;
+  border-radius: 10px;
+  font-size: .875rem;
+  line-height: 1.5;
+}
+
+.login-alert i {
+  margin-top: .15rem;
+}
+
+.login-alert--error {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.login-alert--warning {
+  border: 1px solid #fde68a;
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin: 1.25rem 0;
+  color: var(--home-muted);
+  font-size: .75rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--home-line);
+}
+
 /* Movimento reduzido ------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   html {
